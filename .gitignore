@@ -64,7 +64,6 @@ shared-modules
 z*/
 
 _bmad
-_bmad-output
 .claude
 .codex
 .github/chatmodes
