@@ -10,7 +10,7 @@
     "node": "hardhat node",
     "clean": "hardhat clean",
     "coverage": "hardhat coverage",
-    "docs": "cd documentation && pnpm start"
+    "doc": "cd documentation && pnpm start"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
