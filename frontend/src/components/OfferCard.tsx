@@ -10,7 +10,7 @@ import type { TradeOffer } from '@/hooks/useOpenOffers';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { formatAddress, formatTimestamp } from '@/lib/utils';
+import { formatAddress, formatTimestamp, ipfsToGateway } from '@/lib/utils';
 
 interface OfferCardProps {
   offer: TradeOffer;
@@ -23,14 +23,8 @@ interface OfferCardProps {
  * Montre les deux cartes avec une flèche entre elles
  */
 export function OfferCard({ offer, onAccept, onCancel }: OfferCardProps) {
-  const makerImageUrl = offer.makerCard.metadata?.image?.replace(
-    'ipfs://',
-    'https://gateway.pinata.cloud/ipfs/'
-  );
-  const takerImageUrl = offer.takerCard.metadata?.image?.replace(
-    'ipfs://',
-    'https://gateway.pinata.cloud/ipfs/'
-  );
+  const makerImageUrl = ipfsToGateway(offer.makerCard.metadata?.image);
+  const takerImageUrl = ipfsToGateway(offer.takerCard.metadata?.image);
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -65,8 +59,8 @@ export function OfferCard({ offer, onAccept, onCancel }: OfferCardProps) {
                   className="object-contain p-2"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400 text-xs">
-                  Loading...
+                <div className="flex items-center justify-center h-full">
+                  <div className="w-16 h-16 bg-gray-200 rounded animate-pulse" />
                 </div>
               )}
             </div>
@@ -104,8 +98,8 @@ export function OfferCard({ offer, onAccept, onCancel }: OfferCardProps) {
                   className="object-contain p-2"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400 text-xs">
-                  Loading...
+                <div className="flex items-center justify-center h-full">
+                  <div className="w-16 h-16 bg-gray-200 rounded animate-pulse" />
                 </div>
               )}
             </div>

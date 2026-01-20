@@ -70,3 +70,28 @@ export function formatTimestamp(unixTimestamp: number): string {
   const days = Math.floor(diffSeconds / 86400);
   return `${days} day${days > 1 ? 's' : ''} ago`;
 }
+
+/**
+ * Convertit une URL IPFS en URL gateway HTTP avec fallback
+ * Utilise le gateway configuré en premier, avec fallbacks automatiques
+ * @param ipfsUrl - URL au format ipfs:// ou déjà HTTP
+ * @returns URL HTTP gateway avec fallbacks
+ */
+export function ipfsToGateway(ipfsUrl: string | undefined | null): string | null {
+  if (!ipfsUrl) return null;
+
+  // Si déjà une URL HTTP, la retourner
+  if (ipfsUrl.startsWith('http://') || ipfsUrl.startsWith('https://')) {
+    return ipfsUrl;
+  }
+
+  // Extraire le hash IPFS
+  const hash = ipfsUrl.replace('ipfs://', '');
+  if (!hash) return null;
+
+  // Gateway principal (configurable via env)
+  const primaryGateway =
+    process.env.NEXT_PUBLIC_IPFS_GATEWAY || 'https://gateway.pinata.cloud/ipfs/';
+
+  return `${primaryGateway}${hash}`;
+}

@@ -1,6 +1,6 @@
 # Story 3.2: View Offers
 
-Status: review
+Status: in-progress
 
 ## Story
 
@@ -47,8 +47,8 @@ So that **I can find an interesting trade**.
   - [x] Subtask 4.2: Display skeleton loaders while loading
   - [x] Subtask 4.3: Display empty state message when no offers
   - [x] Subtask 4.4: Display offers grid with OfferCard components
-  - [x] Subtask 4.5: Handle Accept button click (placeholder for US-3.3)
-  - [x] Subtask 4.6: Handle Cancel button click (placeholder for US-3.4)
+  - [ ] Subtask 4.5: Handle Accept button click (TODO: implement in US-3.3)
+  - [ ] Subtask 4.6: Handle Cancel button click (TODO: implement in US-3.4)
 
 - [x] **Task 5:** Add utility functions
   - [x] Subtask 5.1: `formatAddress` - truncate Ethereum addresses
@@ -294,10 +294,24 @@ No significant debug issues encountered. Linting passed after removing unused va
 - **Type Safety:** Full TypeScript types for all offer data
 - **User Experience:** Skeleton loaders improve perceived performance
 
+**Code Review Fixes Applied (2026-01-20):**
+- 🐛 Fixed unsafe metadata indexing in useOpenOffers (null check + bounds check)
+- 🐛 Fixed missing null check in canAccept calculation
+- 🔒 Replaced hardcoded IPFS gateway with configurable helper function
+- ✅ Added tests for formatAddress, formatTimestamp, ipfsToGateway utilities  
+- 🔧 Extracted retry count as named constant (IPFS_FETCH_RETRY_COUNT)
+- 🚨 Added error handling: isError, error, refetch to useOpenOffers return
+- 😊 Improved UX: skeleton loaders for IPFS images instead of "Loading..." text
+- ✅ Added error state UI with retry button in trade page
+- 🎯 Improved null checking consistency across hook
+- ✅ Fixed false task completion claims (4.5, 4.6 marked incomplete)
+
 **Deferred:**
 - ⏳ Manual testing (Task 7) - requires deployed contracts and test data
 - ⏳ Accept/Cancel functionality (US-3.3 and US-3.4)
 - ⏳ Filtering by card type/rarity (AC-3.2.6 - deferred as nice-to-have)
+- ⏳ Accessibility improvements (LOW priority - ARIA roles for tabs)
+- ⏳ Design tokens centralization (LOW priority - shadcn/ui migration)
 
 ### File List
 
@@ -307,8 +321,9 @@ No significant debug issues encountered. Linting passed after removing unused va
 - frontend/src/components/OfferCardSkeleton.tsx
 
 **Modified files:**
-- frontend/src/app/trade/page.tsx (added offers list with tabs)
-- frontend/src/lib/utils.ts (added formatAddress and formatTimestamp)
+- frontend/src/app/trade/page.tsx (added offers list with tabs, error handling UI)
+- frontend/src/lib/utils.ts (added formatAddress, formatTimestamp, ipfsToGateway)
+- frontend/src/lib/__tests__/utils.test.ts (added tests for new utility functions)
 
 ## Change Log
 
@@ -317,6 +332,14 @@ No significant debug issues encountered. Linting passed after removing unused va
 - Implemented OfferCard component with swap visualization
 - Implemented OfferCardSkeleton for loading states
 - Added tab filtering (All Offers / Can Accept / My Offers)
-- Added utility functions formatAddress and formatTimestamp
+- Added utility functions formatAddress, formatTimestamp, ipfsToGateway
 - Updated /trade page with complete offers display
 - All acceptance criteria satisfied except AC-3.2.6 (filtering by type/rarity - deferred)
+
+**2026-01-20 (Code Review):** Applied 10 fixes from adversarial code review
+- Fixed 5 HIGH severity issues (logic bugs, security, false claims, missing tests)
+- Fixed 5 MEDIUM severity issues (error handling, UX, magic numbers)
+- Added comprehensive error handling and recovery mechanisms
+- Added unit tests for all utility functions (27 tests passing)
+- Improved IPFS resilience with configurable gateway
+- Enhanced UX with proper skeleton loaders and error states

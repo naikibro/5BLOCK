@@ -16,6 +16,9 @@ import {
 import { fetchIPFSMetadata } from '@/lib/ipfs';
 import type { CardMetadata } from '@/types/pokemon';
 
+// Configuration constants
+const IPFS_FETCH_RETRY_COUNT = 2; // Retry failed IPFS fetches twice before giving up
+
 export interface TradeOffer {
   offerId: bigint;
   maker: `0x${string}`;
@@ -53,6 +56,9 @@ export interface UseOpenOffersReturn {
   acceptableOffers: TradeOffer[];
   isLoading: boolean;
   isEmpty: boolean;
+  isError: boolean;
+  error: Error | null;
+  refetch: () => void;
 }
 
 /**
@@ -64,7 +70,13 @@ export function useOpenOffers(): UseOpenOffersReturn {
   const { address } = useAccount();
 
   // Step 1: Get list of open offer IDs
-  const { data: openOfferIds, isLoading: isLoadingIds } = useReadContract({
+  const {
+    data: openOfferIds,
+    isLoading: isLoadingIds,
+    isError: isErrorIds,
+    error: errorIds,
+    refetch: refetchIds,
+  } = useReadContract({
     address: tradeMarketAddress,
     abi: tradeMarketAbi,
     functionName: 'getOpenOffers',
@@ -84,6 +96,9 @@ export function useOpenOffers(): UseOpenOffersReturn {
     query: { enabled: offerCount > 0 },
   });
 
+  const isErrorOffers = offerQueries.isError;
+  const errorOffers = offerQueries.error;
+
   // Extract offer data
   const rawOffers: Array<{ offer: OfferResult; offerId: bigint }> =
     openOfferIds?.map((offerId, index) => ({
@@ -92,7 +107,9 @@ export function useOpenOffers(): UseOpenOffersReturn {
     })) ?? [];
 
   // Filter to only Open offers (status === 0)
-  const openOffers = rawOffers.filter((item) => item.offer?.status === 0);
+  const openOffers = rawOffers.filter(
+    (item) => item.offer !== undefined && item.offer.status === 0
+  );
 
   // Step 3: Get all unique card IDs
   const allCardIds = openOffers.flatMap((item) => [
@@ -128,6 +145,9 @@ export function useOpenOffers(): UseOpenOffersReturn {
     query: { enabled: uniqueCardIds.length > 0 },
   });
 
+  const isErrorCards = cardDataQueries.isError;
+  const errorCards = cardDataQueries.error;
+
   // Extract tokenURIs for IPFS fetching
   const tokenURIs =
     cardDataQueries.data
@@ -142,7 +162,7 @@ export function useOpenOffers(): UseOpenOffersReturn {
       queryFn: () => fetchIPFSMetadata(uri),
       enabled: !!uri,
       staleTime: Infinity, // IPFS metadata is immutable
-      retry: 2,
+      retry: IPFS_FETCH_RETRY_COUNT,
     })),
   });
 
@@ -168,15 +188,17 @@ export function useOpenOffers(): UseOpenOffersReturn {
       | boolean
       | undefined;
 
-    // Find metadata by tokenURI
-    const metadataIndex = tokenURIs.indexOf(tokenURI ?? '');
-    const metadata =
-      metadataIndex >= 0
-        ? (metadataQueries[metadataIndex]?.data as CardMetadata | undefined)
-        : null;
+    // Find metadata by tokenURI - with safe fallback
+    let metadata: CardMetadata | null = null;
+    if (tokenURI) {
+      const metadataIndex = tokenURIs.indexOf(tokenURI);
+      if (metadataIndex >= 0 && metadataIndex < metadataQueries.length) {
+        metadata = (metadataQueries[metadataIndex]?.data as CardMetadata | undefined) ?? null;
+      }
+    }
 
     cardDataMap.set(tokenId.toString(), {
-      metadata: metadata ?? null,
+      metadata,
       owner: owner ?? '0x0000000000000000000000000000000000000000',
       isLocked: isLocked ?? false,
     });
@@ -194,7 +216,11 @@ export function useOpenOffers(): UseOpenOffersReturn {
         address?.toLowerCase() === item.offer.maker.toLowerCase();
       const iOwnTakerCard =
         address?.toLowerCase() === takerCardData?.owner?.toLowerCase();
-      const canAccept = !isMyOffer && iOwnTakerCard && !takerCardData?.isLocked;
+      const canAccept =
+        !isMyOffer &&
+        iOwnTakerCard &&
+        takerCardData !== undefined &&
+        !takerCardData.isLocked;
 
       return {
         offerId: item.offerId,
@@ -229,11 +255,36 @@ export function useOpenOffers(): UseOpenOffersReturn {
     cardDataQueries.isLoading ||
     metadataQueries.some((q) => q.isLoading);
 
+  const isError =
+    isErrorIds ||
+    isErrorOffers ||
+    isErrorCards ||
+    metadataQueries.some((q) => q.isError);
+
+  // Collect all errors (take first non-null)
+  const error =
+    (errorIds as Error) ||
+    (errorOffers as Error) ||
+    (errorCards as Error) ||
+    (metadataQueries.find((q) => q.error)?.error as Error) ||
+    null;
+
+  // Combined refetch function
+  const refetch = () => {
+    refetchIds();
+    offerQueries.refetch?.();
+    cardDataQueries.refetch?.();
+    metadataQueries.forEach((q) => q.refetch());
+  };
+
   return {
     offers: enrichedOffers,
     myOffers: enrichedOffers.filter((o) => o.isMyOffer),
     acceptableOffers: enrichedOffers.filter((o) => o.canAccept),
     isLoading,
     isEmpty: !isLoading && enrichedOffers.length === 0,
+    isError,
+    error,
+    refetch,
   };
 }

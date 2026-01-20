@@ -27,21 +27,36 @@ async function main() {
   console.log("✅ PokemonCards déployé à:", cardsAddress);
   
   // ==========================================
-  // 2. Vérifier le déploiement
+  // 2. Déployer TradeMarket
   // ==========================================
-  console.log("\n🔍 Vérification du contrat...");
+  console.log("\n📦 Déploiement de TradeMarket...");
+  const TradeMarket = await ethers.getContractFactory("TradeMarket");
+  const tradeMarket = await TradeMarket.deploy(cardsAddress);
+  await tradeMarket.waitForDeployment();
+  
+  const marketAddress = await tradeMarket.getAddress();
+  console.log("✅ TradeMarket déployé à:", marketAddress);
+  
+  // ==========================================
+  // 3. Vérifier le déploiement
+  // ==========================================
+  console.log("\n🔍 Vérification des contrats...");
   const name = await pokemonCards.name();
   const symbol = await pokemonCards.symbol();
   const maxCards = await pokemonCards.MAX_CARDS_PER_WALLET();
   const lockDuration = await pokemonCards.LOCK_DURATION();
+  const cooldownDuration = await tradeMarket.COOLDOWN_DURATION();
   
-  console.log("   Nom:", name);
-  console.log("   Symbole:", symbol);
-  console.log("   Max cartes par wallet:", maxCards.toString());
-  console.log("   Durée du lock:", lockDuration.toString(), "secondes");
+  console.log("   PokemonCards:");
+  console.log("     - Nom:", name);
+  console.log("     - Symbole:", symbol);
+  console.log("     - Max cartes par wallet:", maxCards.toString());
+  console.log("     - Durée du lock:", lockDuration.toString(), "secondes");
+  console.log("   TradeMarket:");
+  console.log("     - Cooldown:", cooldownDuration.toString(), "secondes");
   
   // ==========================================
-  // 3. Sauvegarder les adresses
+  // 4. Sauvegarder les adresses
   // ==========================================
   const deploymentInfo = {
     network: (await ethers.provider.getNetwork()).name,
@@ -53,6 +68,10 @@ async function main() {
         address: cardsAddress,
         name: name,
         symbol: symbol,
+      },
+      TradeMarket: {
+        address: marketAddress,
+        pokemonCardsAddress: cardsAddress,
       },
     },
   };
@@ -78,12 +97,33 @@ async function main() {
   console.log("\n💾 Informations de déploiement sauvegardées dans:", filename);
   
   // ==========================================
-  // 4. Configuration pour le frontend
+  // 5. Configuration pour le frontend
   // ==========================================
   console.log("\n📝 Configuration pour le frontend (.env.local):");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log(`NEXT_PUBLIC_POKEMON_CARDS_ADDRESS=${cardsAddress}`);
+  console.log(`NEXT_PUBLIC_TRADE_MARKET_ADDRESS=${marketAddress}`);
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  
+  // Mettre à jour automatiquement le .env.local du frontend
+  const frontendEnvPath = path.join(__dirname, "../frontend/.env.local");
+  if (fs.existsSync(frontendEnvPath)) {
+    let envContent = fs.readFileSync(frontendEnvPath, "utf8");
+    envContent = envContent.replace(
+      /NEXT_PUBLIC_POKEMON_CARDS_ADDRESS=.*/,
+      `NEXT_PUBLIC_POKEMON_CARDS_ADDRESS=${cardsAddress}`
+    );
+    if (!envContent.includes("NEXT_PUBLIC_TRADE_MARKET_ADDRESS")) {
+      envContent += `\nNEXT_PUBLIC_TRADE_MARKET_ADDRESS=${marketAddress}\n`;
+    } else {
+      envContent = envContent.replace(
+        /NEXT_PUBLIC_TRADE_MARKET_ADDRESS=.*/,
+        `NEXT_PUBLIC_TRADE_MARKET_ADDRESS=${marketAddress}`
+      );
+    }
+    fs.writeFileSync(frontendEnvPath, envContent);
+    console.log("\n✅ Fichier .env.local du frontend mis à jour automatiquement!");
+  }
   
   // ==========================================
   // 5. Vérification Etherscan (si Sepolia)

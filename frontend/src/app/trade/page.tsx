@@ -13,7 +13,7 @@ import { OfferCardSkeleton } from '@/components/OfferCardSkeleton';
  */
 export default function TradePage() {
   const { isConnected } = useRequireWallet();
-  const { offers, myOffers, acceptableOffers, isLoading } =
+  const { offers, myOffers, acceptableOffers, isLoading, isError, error, refetch } =
     useOpenOffers();
   const [activeTab, setActiveTab] = useState<'all' | 'mine' | 'acceptable'>('all');
 
@@ -102,8 +102,39 @@ export default function TradePage() {
               </button>
             </div>
 
+            {/* Error state */}
+            {isError && !isLoading && (
+              <div className="text-center py-12 bg-red-50 rounded-lg border border-red-200">
+                <svg
+                  className="w-16 h-16 text-red-400 mx-auto mb-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <p className="text-red-600 text-lg font-semibold mb-2">
+                  Failed to load offers
+                </p>
+                <p className="text-red-500 text-sm mb-4">
+                  {error?.message || 'An error occurred'}
+                </p>
+                <button
+                  onClick={refetch}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+
             {/* Loading state */}
-            {isLoading && (
+            {isLoading && !isError && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <OfferCardSkeleton key={i} />
@@ -112,7 +143,7 @@ export default function TradePage() {
             )}
 
             {/* Empty state */}
-            {!isLoading && displayedOffers.length === 0 && (
+            {!isLoading && !isError && displayedOffers.length === 0 && (
               <div className="text-center py-12 bg-gray-50 rounded-lg">
                 <svg
                   className="w-16 h-16 text-gray-400 mx-auto mb-4"
@@ -139,7 +170,7 @@ export default function TradePage() {
             )}
 
             {/* Offers grid */}
-            {!isLoading && displayedOffers.length > 0 && (
+            {!isLoading && !isError && displayedOffers.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {displayedOffers.map((offer) => (
                   <OfferCard

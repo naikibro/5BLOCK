@@ -2,7 +2,7 @@
  * Tests pour les fonctions utilitaires
  */
 
-import { formatDate, formatTime, cn } from '../utils';
+import { formatDate, formatTime, cn, formatAddress, formatTimestamp, ipfsToGateway } from '../utils';
 
 describe('formatDate', () => {
   it('should format date correctly', () => {
@@ -84,5 +84,101 @@ describe('cn', () => {
     const result = cn('p-4', 'p-2');
     // tailwind-merge should keep only the last padding class
     expect(result).toBe('p-2');
+  });
+});
+
+describe('formatAddress', () => {
+  it('should truncate Ethereum addresses', () => {
+    const address = '0x1234567890abcdef1234567890abcdef12345678';
+    expect(formatAddress(address)).toBe('0x1234...5678');
+  });
+
+  it('should handle short addresses', () => {
+    const shortAddress = '0x123';
+    expect(formatAddress(shortAddress)).toBe('0x123');
+  });
+
+  it('should handle empty string', () => {
+    expect(formatAddress('')).toBe('');
+  });
+
+  it('should handle undefined/null by returning as-is', () => {
+    expect(formatAddress(null as unknown as string)).toBe(null);
+    expect(formatAddress(undefined as unknown as string)).toBe(undefined);
+  });
+});
+
+describe('formatTimestamp', () => {
+  beforeEach(() => {
+    // Mock Date.now() to return a fixed timestamp
+    jest.spyOn(Date, 'now').mockReturnValue(1000000000000); // 2001-09-09
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should return "just now" for recent timestamps', () => {
+    const timestamp = Math.floor(Date.now() / 1000) - 30; // 30 seconds ago
+    expect(formatTimestamp(timestamp)).toBe('just now');
+  });
+
+  it('should format minutes correctly', () => {
+    const timestamp = Math.floor(Date.now() / 1000) - 120; // 2 minutes ago
+    expect(formatTimestamp(timestamp)).toBe('2 minutes ago');
+  });
+
+  it('should handle singular minute', () => {
+    const timestamp = Math.floor(Date.now() / 1000) - 60; // 1 minute ago
+    expect(formatTimestamp(timestamp)).toBe('1 minute ago');
+  });
+
+  it('should format hours correctly', () => {
+    const timestamp = Math.floor(Date.now() / 1000) - 7200; // 2 hours ago
+    expect(formatTimestamp(timestamp)).toBe('2 hours ago');
+  });
+
+  it('should handle singular hour', () => {
+    const timestamp = Math.floor(Date.now() / 1000) - 3600; // 1 hour ago
+    expect(formatTimestamp(timestamp)).toBe('1 hour ago');
+  });
+
+  it('should format days correctly', () => {
+    const timestamp = Math.floor(Date.now() / 1000) - 172800; // 2 days ago
+    expect(formatTimestamp(timestamp)).toBe('2 days ago');
+  });
+
+  it('should handle singular day', () => {
+    const timestamp = Math.floor(Date.now() / 1000) - 86400; // 1 day ago
+    expect(formatTimestamp(timestamp)).toBe('1 day ago');
+  });
+});
+
+describe('ipfsToGateway', () => {
+  it('should convert ipfs:// URLs to gateway URLs', () => {
+    const ipfsUrl = 'ipfs://QmHash123';
+    const result = ipfsToGateway(ipfsUrl);
+    expect(result).toContain('QmHash123');
+    expect(result).toMatch(/^https?:\/\//);
+  });
+
+  it('should return HTTP URLs unchanged', () => {
+    const httpUrl = 'https://example.com/image.png';
+    expect(ipfsToGateway(httpUrl)).toBe(httpUrl);
+  });
+
+  it('should handle null/undefined', () => {
+    expect(ipfsToGateway(null)).toBe(null);
+    expect(ipfsToGateway(undefined)).toBe(null);
+  });
+
+  it('should handle empty string', () => {
+    expect(ipfsToGateway('')).toBe(null);
+  });
+
+  it('should use default gateway', () => {
+    const ipfsUrl = 'ipfs://QmHash456';
+    const result = ipfsToGateway(ipfsUrl);
+    expect(result).toBe('https://gateway.pinata.cloud/ipfs/QmHash456');
   });
 });
