@@ -17,9 +17,20 @@ npm-debug.log*
 
 # Build output
 build/*.txt
+dist/
+artifacts/
+cache/
+typechain-types/
+
+# Hardhat
+deployments/*.json
+!deployments/.gitkeep
 
 # Environment variables
 .env
+.env.local
+.env.*.local
+*.key
 
 # System files
 .DS_Store
