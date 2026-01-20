@@ -26,6 +26,25 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config) => {
+    // Ignore React Native and Node.js modules not needed in browser
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      '@react-native-async-storage/async-storage': false,
+      'pino-pretty': false,
+      fs: false,
+      net: false,
+      tls: false,
+    };
+
+    // Ignore warnings about these modules
+    config.ignoreWarnings = [
+      /Can't resolve '@react-native-async-storage\/async-storage'/,
+      /Can't resolve 'pino-pretty'/,
+    ];
+
+    return config;
+  },
 }
 
 module.exports = nextConfig
