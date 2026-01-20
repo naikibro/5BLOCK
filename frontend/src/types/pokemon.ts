@@ -131,3 +131,25 @@ export interface OwnedCard {
   // IPFS metadata
   metadata: CardMetadata | null;
 }
+
+/**
+ * Interface complète pour les détails d'une carte (page détails)
+ * Inclut toutes les informations on-chain et IPFS
+ */
+export interface CardDetails {
+  tokenId: bigint;
+  owner: `0x${string}`;
+  // On-chain data
+  pokemonId: number;
+  rarityTier: number;
+  value: number;
+  createdAt: Date;
+  lastTransferAt: Date;
+  lockUntil: Date;
+  isLocked: boolean;
+  lockRemaining: number;
+  previousOwners: `0x${string}`[];
+  tokenURI: string;
+  // IPFS metadata
+  metadata: CardMetadata | null;
+}

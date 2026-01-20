@@ -57,7 +57,7 @@ export function MintButton({ pokemon }: MintButtonProps) {
     setShowDialog(true);
     try {
       await mint(pokemon);
-    } catch (err) {
+    } catch {
       // Error is handled in the hook
     }
   };
