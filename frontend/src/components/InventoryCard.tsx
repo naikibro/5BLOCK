@@ -135,7 +135,7 @@ export function InventoryCard({ card, onViewDetails, onProposeTrade }: Inventory
       <CardFooter className="p-4 pt-0">
         <Button
           className="w-full"
-          variant={isLocked ? 'secondary' : 'default'}
+          variant={isLocked ? 'outline' : 'default'}
           disabled={isLocked}
           onClick={(e) => {
             e.stopPropagation();

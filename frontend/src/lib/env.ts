@@ -57,7 +57,7 @@ export function validateServerEnv(): ServerEnv {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const messages = error.errors.map((err) => `${err.path.join('.')}: ${err.message}`);
+      const messages = error.issues.map((err) => `${err.path.join('.')}: ${err.message}`);
       throw new Error(
         `❌ Variables d'environnement serveur invalides:\n${messages.join('\n')}`
       );
@@ -79,7 +79,7 @@ export function validateClientEnv(): ClientEnv {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const messages = error.errors.map((err) => `${err.path.join('.')}: ${err.message}`);
+      const messages = error.issues.map((err) => `${err.path.join('.')}: ${err.message}`);
       console.warn(
         `⚠️  Variables d'environnement client invalides:\n${messages.join('\n')}`
       );

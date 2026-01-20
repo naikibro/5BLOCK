@@ -80,7 +80,7 @@ export function useOwnedCards() {
   const metadataQueries = useQueries({
     queries: (tokenUriQueries.data ?? []).map((result) => ({
       queryKey: ['ipfs-metadata', result.result],
-      queryFn: () => fetchIPFSMetadata(result.result as string),
+      queryFn: () => fetchIPFSMetadata(result.result!),
       enabled: !!result.result,
       staleTime: Infinity,
       retry: 2,

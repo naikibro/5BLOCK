@@ -94,7 +94,7 @@ export function MintButton({ pokemon }: MintButtonProps) {
         onClick={handleMint}
         disabled={isDisabled}
         className="w-full"
-        variant={isMinted ? 'secondary' : 'default'}
+        variant={isMinted ? 'outline' : 'default'}
       >
         {buttonIcon}
         {buttonLabel}
