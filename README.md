@@ -198,6 +198,7 @@ See **[DEPLOY.md](./DEPLOY.md)** for deployment instructions (local or Sepolia).
 
 ## Documentation
 
+- [Getting Started](./documentation/) - Launch locally with Docusaurus
 - [Smart Contract Specs](./docs/specs/smart-contracts.md)
 - [User Stories](./docs/user-stories/)
 

@@ -9,7 +9,8 @@
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
     "node": "hardhat node",
     "clean": "hardhat clean",
-    "coverage": "hardhat coverage"
+    "coverage": "hardhat coverage",
+    "docs": "cd documentation && pnpm start"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
