@@ -1,0 +1,168 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop, epic/**]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # Job 1: Compilation Solidity
+  compile-solidity:
+    name: 🔨 Compile Solidity
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      
+      - name: 📦 Install deps
+        run: npm ci
+      
+      - name: 🔨 Compile
+        run: npm run compile
+
+  # Job 2: Tests Smart Contracts
+  test-contracts:
+    name: 🧪 Test Contracts
+    runs-on: ubuntu-latest
+    needs: compile-solidity
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      
+      - name: 📦 Install deps
+        run: npm ci
+      
+      - name: 🧪 Run tests
+        run: npm run test
+
+  # Job 3: Compilation TypeScript (Frontend)
+  compile-frontend:
+    name: 🔨 Compile Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: 📦 Install deps
+        run: pnpm install --frozen-lockfile
+      
+      - name: 🔨 Build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'dummy-for-ci' }}
+          NEXT_PUBLIC_CONTRACT_ADDRESS: '0x0000000000000000000000000000000000000000'
+
+  # Job 4: Lint Frontend
+  lint-frontend:
+    name: 🔍 Lint Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: 📦 Install deps
+        run: pnpm install --frozen-lockfile
+      
+      - name: 🔍 Lint
+        run: pnpm lint
+
+  # Job 5: Tests Frontend
+  test-frontend:
+    name: 🧪 Test Frontend
+    runs-on: ubuntu-latest
+    needs: compile-frontend
+    defaults:
+      run:
+        working-directory: ./frontend
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: 📦 Install deps
+        run: pnpm install --frozen-lockfile
+      
+      - name: 🧪 Run tests
+        run: CI=true pnpm test
+
+  # Job 6: Summary
+  ci-summary:
+    name: ✅ CI Summary
+    runs-on: ubuntu-latest
+    needs: [compile-solidity, test-contracts, compile-frontend, lint-frontend, test-frontend]
+    if: always()
+    
+    steps:
+      - name: 📊 Check results
+        run: |
+          echo "🎉 CI Pipeline completed!"
+          echo ""
+          echo "✅ Solidity compilation: ${{ needs.compile-solidity.result }}"
+          echo "✅ Contract tests: ${{ needs.test-contracts.result }}"
+          echo "✅ Frontend compilation: ${{ needs.compile-frontend.result }}"
+          echo "✅ Frontend linting: ${{ needs.lint-frontend.result }}"
+          echo "✅ Frontend tests: ${{ needs.test-frontend.result }}"
+      
+      - name: ❌ Fail if any job failed
+        if: |
+          needs.compile-solidity.result == 'failure' ||
+          needs.test-contracts.result == 'failure' ||
+          needs.compile-frontend.result == 'failure' ||
+          needs.lint-frontend.result == 'failure' ||
+          needs.test-frontend.result == 'failure'
+        run: |
+          echo "❌ One or more CI jobs failed"
+          exit 1

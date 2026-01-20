@@ -507,3 +507,110 @@ function formatTime(seconds: number): string {
 - [ ] État "Not Found" géré
 - [ ] Bouton Trade conditionnel
 - [ ] Tests manuels passés
+
+---
+
+## Tasks/Subtasks
+
+### Task 1: Types pour CardDetails
+- [ ] 1.1: Étendre `types/pokemon.ts` avec interface `CardDetails`
+- [ ] 1.2: Inclure tous les champs on-chain et IPFS nécessaires
+
+### Task 2: Hook useCardDetails
+- [ ] 2.1: Créer `hooks/useCardDetails.ts`
+- [ ] 2.2: Vérifier si le token existe avec `exists(tokenId)`
+- [ ] 2.3: Lire `ownerOf(tokenId)`
+- [ ] 2.4: Lire `getCardMeta(tokenId)`
+- [ ] 2.5: Lire `getPreviousOwners(tokenId)`
+- [ ] 2.6: Lire `tokenURI(tokenId)`
+- [ ] 2.7: Fetch metadata IPFS
+- [ ] 2.8: Calculer `isLocked` et `lockRemaining`
+- [ ] 2.9: Formater les dates (createdAt, lastTransferAt, lockUntil)
+- [ ] 2.10: Retourner details, exists, isLoading, notFound
+- [ ] 2.11: Écrire tests pour useCardDetails
+- [ ] 2.12: Vérifier que tous les tests passent
+
+### Task 3: Composant AddressDisplay
+- [ ] 3.1: Créer composant helper `AddressDisplay` pour afficher les adresses
+- [ ] 3.2: Implémenter truncation (0x1234...5678)
+- [ ] 3.3: Ajouter badge "You" si c'est l'utilisateur
+- [ ] 3.4: Ajouter bouton copy to clipboard
+- [ ] 3.5: Écrire tests pour AddressDisplay
+
+### Task 4: Page Card Details - Structure
+- [ ] 4.1: Créer `app/card/[tokenId]/page.tsx`
+- [ ] 4.2: Extraire tokenId depuis useParams
+- [ ] 4.3: Intégrer hook `useCardDetails`
+- [ ] 4.4: Implémenter état loading (skeleton)
+- [ ] 4.5: Implémenter état "Not Found" avec message et CTA
+- [ ] 4.6: Créer layout 2 colonnes (image à gauche, détails à droite)
+
+### Task 5: Page Card Details - Section Image
+- [ ] 5.1: Afficher image HD depuis IPFS avec Next.js Image
+- [ ] 5.2: Ajouter badge Lock status (locked/available)
+- [ ] 5.3: Ajouter badge Rarity
+
+### Task 6: Page Card Details - Section Stats
+- [ ] 6.1: Créer Card "Stats" avec toutes les statistiques
+- [ ] 6.2: Afficher HP, Attack, Defense, Speed avec Progress bars
+- [ ] 6.3: Calculer et afficher pourcentage (value/maxValue * 100)
+- [ ] 6.4: Afficher Value et Rarity en bas
+
+### Task 7: Page Card Details - Section Timeline
+- [ ] 7.1: Créer Card "Timeline"
+- [ ] 7.2: Afficher Created date formatée
+- [ ] 7.3: Afficher Last Transfer date formatée
+- [ ] 7.4: Afficher Lock Status avec temps restant si locked
+
+### Task 8: Page Card Details - Section Provenance
+- [ ] 8.1: Créer Card "Provenance"
+- [ ] 8.2: Afficher Current Owner avec AddressDisplay
+- [ ] 8.3: Afficher Previous Owners list si présents
+- [ ] 8.4: Ajouter lien "View on IPFS" vers metadata
+
+### Task 9: Page Card Details - Actions
+- [ ] 9.1: Ajouter bouton "Propose Trade" si owner et unlocked
+- [ ] 9.2: Désactiver si locked avec message
+- [ ] 9.3: Créer lien vers `/trade/create?tokenId=X`
+
+### Task 10: Validation finale
+- [ ] 10.1: Vérifier tous les critères d'acceptation (AC-2.4.1 à AC-2.4.10)
+- [ ] 10.2: Exécuter tous les tests (unit + integration)
+- [ ] 10.3: Tester manuellement les scénarios de test
+- [ ] 10.4: Tester avec carte existante/inexistante
+- [ ] 10.5: Vérifier badge "You" sur owner
+- [ ] 10.6: Tester lien IPFS
+- [ ] 10.7: Tester copy address
+- [ ] 10.8: Vérifier la responsivité (mobile, tablet, desktop)
+- [ ] 10.9: Fix des linter errors si présents
+
+---
+
+## Dev Agent Record
+
+### Implementation Plan
+_À remplir pendant l'implémentation_
+
+### Debug Log
+_À remplir si nécessaire_
+
+### Completion Notes
+_À remplir à la fin_
+
+---
+
+## File List
+_Liste des fichiers créés/modifiés pendant l'implémentation_
+
+---
+
+## Change Log
+_Historique des modifications_
+
+---
+
+## Status
+**Status:** ready-for-dev
+**Story Key:** 2-4-card-details
+**Last Updated:** 2026-01-20
+**Dependencies:** US-2.3 (Inventory)

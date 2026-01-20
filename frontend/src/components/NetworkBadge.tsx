@@ -32,11 +32,17 @@ export function NetworkBadge() {
   const [showMenu, setShowMenu] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const chainInfo = SUPPORTED_CHAINS[chainId];
   const isSupported = !!chainInfo;
+
+  // Fix hydration error: only show network after client mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Handle switch chain errors
   useEffect(() => {
@@ -107,6 +113,15 @@ export function NetworkBadge() {
       }
     );
   };
+
+  // Prevent hydration mismatch: show placeholder during SSR
+  if (!isMounted) {
+    return (
+      <div className="bg-gray-300 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold">
+        <span className="opacity-0">Loading...</span>
+      </div>
+    );
+  }
 
   if (!isSupported) {
     return (

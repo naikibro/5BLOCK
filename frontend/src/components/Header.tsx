@@ -29,13 +29,26 @@ export function Header() {
             <div className="flex items-center gap-6">
               <Link 
                 href="/" 
-                className="text-2xl font-bold hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-sm"
+                className="text-2xl font-bold text-blue-400 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-sm"
                 aria-label="5BLOCK Home"
               >
                 5BLOCK
               </Link>
               <nav role="navigation" aria-label="Main navigation">
                 <ul className="flex items-center gap-4 list-none m-0 p-0">
+                  <li>
+                    <Link 
+                      href="/catalog" 
+                      className={`text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-sm px-2 py-1 ${
+                        pathname === '/catalog'
+                          ? 'text-blue-600 underline underline-offset-4'
+                          : 'text-gray-700 hover:text-gray-900'
+                      }`}
+                      aria-current={pathname === '/catalog' ? 'page' : undefined}
+                    >
+                      Catalog
+                    </Link>
+                  </li>
                   <li>
                     <Link 
                       href="/inventory" 

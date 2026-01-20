@@ -29,7 +29,60 @@ A decentralized application for trading Pokemon cards on the Ethereum blockchain
 | RPC Provider | QuickNode |
 | Wallet | MetaMask |
 
-## Quick Start
+## 🚀 Quick Start
+
+### ⚡ Local Development (5 minutes)
+
+**Terminal 1 - Start Hardhat node:**
+```bash
+pnpm run node
+```
+
+**Terminal 2 - Deploy contract:**
+```bash
+pnpm run deploy:local
+# Copy the address displayed
+```
+
+**Terminal 3 - Configure and start frontend:**
+```bash
+cd frontend
+# Create .env.local with:
+# NEXT_PUBLIC_POKEMON_CARDS_ADDRESS=<paste_address>
+# PINATA_JWT=skip
+pnpm dev
+```
+
+**Configure MetaMask:**
+- Add network: Hardhat Local (RPC: http://127.0.0.1:8545, Chain ID: 31337)
+- Import test account (private key from Terminal 1)
+
+Open http://localhost:3000/catalog and mint your first card!
+
+### 🌐 Sepolia Testnet Deployment
+
+**1. Configure `.env` at root:**
+```bash
+PRIVATE_KEY=your_private_key
+SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
+ETHERSCAN_API_KEY=your_etherscan_key
+```
+
+**2. Deploy:**
+```bash
+pnpm run deploy:sepolia
+```
+
+**3. Configure `frontend/.env.local`:**
+```bash
+NEXT_PUBLIC_POKEMON_CARDS_ADDRESS=<deployed_address>
+PINATA_JWT=<your_pinata_jwt>
+```
+
+**4. Start frontend:**
+```bash
+cd frontend && pnpm dev
+```
 
 ### Prerequisites
 
@@ -47,70 +100,23 @@ cd 5block
 # Install dependencies
 pnpm install
 
-# Copy environment variables
-cp .env.example .env.local
+# Dans le frontend
+cd frontend
+pnpm install
 ```
 
-### Environment Variables
-
-```env
-# QuickNode RPC endpoint
-NEXT_PUBLIC_QUICKNODE_URL=your_quicknode_endpoint
-
-# Pinata IPFS
-PINATA_JWT=your_pinata_jwt
-NEXT_PUBLIC_PINATA_GATEWAY=your_pinata_gateway
-
-# Contract addresses (after deployment)
-NEXT_PUBLIC_POKEMON_CARDS_ADDRESS=0x...
-NEXT_PUBLIC_TRADE_MARKET_ADDRESS=0x...
-```
-
-### Run Local Development
-
-```bash
-# Start local Hardhat node
-pnpm hardhat node
-
-# Deploy contracts (in another terminal)
-pnpm hardhat run scripts/deploy.ts --network localhost
-
-# Start frontend dev server
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Deploy to Sepolia Testnet
-
-```bash
-# Deploy contracts to Sepolia
-pnpm hardhat run scripts/deploy.ts --network sepolia
-```
 
 ## Smart Contracts
 
 ### PokemonCards.sol
+ERC721 NFT contract with mint limit (4 cards/wallet), 10-minute lock, and ownership history.
 
-ERC721 NFT contract for Pokemon trading cards.
+**Key functions:** `mint()`, `getCardMeta()`, `isLocked()`, `getOwnedCount()`
 
-| Function | Description |
-|----------|-------------|
-| `mint(pokemonId, rarityTier, value, tokenURI)` | Mint a new card (max 4 per wallet) |
-| `getCardMeta(tokenId)` | Get card metadata |
-| `getPreviousOwners(tokenId)` | Get ownership history |
-| `isLocked(tokenId)` | Check if card is locked |
+**Tests:** 27/27 passing ✅
 
 ### TradeMarket.sol
-
-Marketplace for peer-to-peer card trading.
-
-| Function | Description |
-|----------|-------------|
-| `createOffer(makerTokenId, takerTokenId)` | Create a trade offer |
-| `acceptOffer(offerId)` | Accept an offer (atomic swap) |
-| `cancelOffer(offerId)` | Cancel your offer |
-| `getCooldownRemaining(address)` | Check cooldown status |
+Coming soon (Epic 3)
 
 ## Rarity System
 
@@ -143,44 +149,57 @@ Rarity is calculated from Pokemon base stats (HP + Attack + Defense):
 ## Testing
 
 ```bash
-# Run smart contract tests
-pnpm hardhat test
+# Smart contract tests (27 tests)
+pnpm test
 
-# Run with coverage
-pnpm hardhat coverage
+# Frontend tests (34 tests)  
+cd frontend && pnpm test
+
+# Lint
+cd frontend && pnpm run lint
 ```
-
-Target coverage: > 80% for all contracts.
 
 ## Project Structure
 
 ```
 5block/
 ├── contracts/           # Solidity smart contracts
-│   ├── PokemonCards.sol
-│   └── TradeMarket.sol
-├── scripts/             # Deployment scripts
-├── test/                # Contract tests
-├── src/
-│   ├── app/             # Next.js App Router pages
-│   ├── components/      # React components
-│   ├── hooks/           # Custom React hooks
-│   ├── lib/             # Utilities and config
-│   └── types/           # TypeScript types
-├── docs/                # Project documentation
-│   ├── specs/           # Technical specifications
+│   └── PokemonCards.sol
+├── scripts/             # Deployment scripts  
+│   └── deploy.ts
+├── test/                # Contract tests (27 tests)
+│   └── PokemonCards.test.ts
+├── frontend/
+│   └── src/
+│       ├── app/         # Pages: /, /catalog, /inventory
+│       ├── components/  # UI components
+│       ├── hooks/       # React hooks
+│       ├── lib/         # Utils, contracts, API services
+│       └── types/       # TypeScript types
+├── docs/                # Documentation
+│   ├── specs/           # Technical specs
 │   └── user-stories/    # User stories
-└── hardhat.config.ts    # Hardhat configuration
+├── hardhat.config.ts    # Hardhat config
+└── DEPLOY.md            # Deployment guide
 ```
+
+## Current Status
+
+```
+✅ US-2.1 Pokemon Catalog - DONE (34 tests)
+✅ US-2.2 Mint Card - DONE (27 tests)  
+⏳ US-2.3 Inventory - Ready for dev
+⏳ US-2.4 Card Details - Ready for dev
+```
+
+## Deployment
+
+See **[DEPLOY.md](./DEPLOY.md)** for deployment instructions (local or Sepolia).
 
 ## Documentation
 
-Detailed documentation is available in the [docs](./docs) folder:
-
-- [Technical Requirements](./docs/specs/technical-requirements.md)
 - [Smart Contract Specs](./docs/specs/smart-contracts.md)
-- [Tech Stack Details](./docs/specs/tech-stack.md)
-- [User Stories](./docs/user-stories/README.md)
+- [User Stories](./docs/user-stories/)
 
 ## Networks
 
