@@ -89,7 +89,7 @@ export function useCardDetails(tokenId: bigint): UseCardDetailsReturn {
         tokenId,
         owner: owner as `0x${string}`,
         pokemonId: Number(cardMeta?.pokemonId ?? 0),
-        rarityTier: Number(cardMeta?.rarityTier ?? 1),
+        rarityTier: Number(cardMeta?.rarityTier ?? 1) as 1 | 2 | 3 | 4,
         value: Number(cardMeta?.value ?? 0),
         createdAt: new Date(Number(cardMeta?.createdAt ?? 0) * 1000),
         lastTransferAt: new Date(Number(cardMeta?.lastTransferAt ?? 0) * 1000),

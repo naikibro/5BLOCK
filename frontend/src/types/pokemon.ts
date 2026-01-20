@@ -105,7 +105,7 @@ export interface CardMetadata {
   // Custom properties
   properties: {
     pokemonId: number;
-    rarityTier: number;
+    rarityTier: RarityTier;
     value: number;
     createdAt: number;
     lastTransferAt: number;
@@ -120,7 +120,7 @@ export interface OwnedCard {
   tokenId: bigint;
   // On-chain data
   pokemonId: number;
-  rarityTier: number;
+  rarityTier: RarityTier;
   value: number;
   createdAt: number;
   lastTransferAt: number;
@@ -141,7 +141,7 @@ export interface CardDetails {
   owner: `0x${string}`;
   // On-chain data
   pokemonId: number;
-  rarityTier: number;
+  rarityTier: RarityTier;
   value: number;
   createdAt: Date;
   lastTransferAt: Date;
