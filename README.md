@@ -1,4 +1,6 @@
+![logo](./documentation/static/img/logo.png)
 # 5BLOCK - Pokemon Trading Cards DApp
+
 
 Mint, collect and trade Pokemon NFT cards on Ethereum.
 

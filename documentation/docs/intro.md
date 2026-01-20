@@ -4,6 +4,7 @@ slug: /
 title: Getting Started
 sidebar_position: 1
 ---
+![logo](../static/img/logo.png)
 
 # 5BLOCK - Pokemon Trading Cards DApp
 
