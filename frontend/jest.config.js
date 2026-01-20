@@ -12,7 +12,9 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^wagmi$': '<rootDir>/src/__mocks__/wagmi.js',
+    '^wagmi/chains$': '<rootDir>/src/__mocks__/wagmi.js',
     '^wagmi/connectors$': '<rootDir>/src/__mocks__/wagmi-connectors.js',
+    '^@tanstack/react-query$': '<rootDir>/src/__mocks__/@tanstack/react-query.jsx',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(wagmi|@wagmi|viem|@tanstack/react-query|@wagmi/connectors)/)',
