@@ -1,100 +1,57 @@
-name: TypeScript Compilation
+name: compile typescript
 
 on:
   push:
     branches: [main, develop, epic/**]
-    paths:
-      - 'frontend/**/*.ts'
-      - 'frontend/**/*.tsx'
-      - 'frontend/tsconfig.json'
-      - 'scripts/**/*.ts'
-      - 'tsconfig.json'
-      - '.github/workflows/compile-typescript.yml'
   pull_request:
     branches: [main, develop]
-    paths:
-      - 'frontend/**/*.ts'
-      - 'frontend/**/*.tsx'
-      - 'frontend/tsconfig.json'
-      - 'scripts/**/*.ts'
-      - 'tsconfig.json'
 
 jobs:
   compile-root-typescript:
-    name: Compile Root TypeScript (Hardhat)
+    name: Compile Root TypeScript
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-      
-      - name: 🟢 Setup Node.js
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
-          cache: 'npm'
-      
-      - name: 📦 Install dependencies
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
         run: npm ci
-      
-      - name: 🔨 Compile TypeScript (via Hardhat)
+
+      - name: Run TypeScript compilation
         run: npm run compile
-      
-      - name: ✅ TypeScript compilation successful
-        run: echo "✅ Root TypeScript compiled successfully"
 
   compile-frontend-typescript:
-    name: Compile Frontend TypeScript (Next.js)
+    name: Compile Frontend TypeScript
     runs-on: ubuntu-latest
-    
+
     defaults:
       run:
         working-directory: ./frontend
-    
+
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-      
-      - name: 🟢 Setup Node.js
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
-      
-      - name: 📦 Setup pnpm
+          node-version: "20"
+
+      - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-          run_install: false
-      
-      - name: 🗂️ Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      
-      - name: 🔄 Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-      
-      - name: 📦 Install dependencies
+
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
-      - name: 🔨 Build Next.js (compiles TypeScript)
+
+      - name: Build Next.js
         run: pnpm build
         env:
-          # Provide dummy env vars for build
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'dummy-project-id-for-ci' }}
           NEXT_PUBLIC_CONTRACT_ADDRESS: '0x0000000000000000000000000000000000000000'
-      
-      - name: ✅ TypeScript compilation successful
-        run: echo "✅ Frontend TypeScript compiled successfully"
-      
-      - name: 📤 Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend/.next/
-          retention-days: 7
