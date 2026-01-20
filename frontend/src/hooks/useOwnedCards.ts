@@ -99,7 +99,7 @@ export function useOwnedCards() {
       tokenId,
       // On-chain data
       pokemonId: Number(cardMetaResult?.pokemonId ?? 0n),
-      rarityTier: Number(cardMetaResult?.rarityTier ?? 1),
+      rarityTier: Number(cardMetaResult?.rarityTier ?? 1) as 1 | 2 | 3 | 4,
       value: Number(cardMetaResult?.value ?? 0n),
       createdAt: Number(cardMetaResult?.createdAt ?? 0n),
       lastTransferAt: Number(cardMetaResult?.lastTransferAt ?? 0n),

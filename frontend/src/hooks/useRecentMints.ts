@@ -9,12 +9,13 @@ import { useReadContract } from 'wagmi';
 import { pokemonCardsAbi, pokemonCardsAddress } from '@/lib/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { fetchIPFSMetadata } from '@/lib/ipfs';
+import type { RarityTier } from '@/types/pokemon';
 
 export interface ShowcasePokemon {
   tokenId: bigint;
   owner: string;
   pokemonId: number;
-  rarityTier: number;
+  rarityTier: RarityTier;
   timestamp: number;
   metadata?: {
     name: string;
