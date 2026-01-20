@@ -1,8 +1,6 @@
 name: compile typescript
 
 on:
-  push:
-    branches: [main, develop, epic/**]
   pull_request:
     branches: [main, develop]
 
