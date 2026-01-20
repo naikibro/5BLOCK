@@ -3,7 +3,6 @@ node_modules/
 bun.lock
 deno.lock
 pnpm-workspace.yaml
-package-lock.json
 
 
 test-output/*
