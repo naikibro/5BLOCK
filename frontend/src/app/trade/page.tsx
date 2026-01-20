@@ -1,10 +1,11 @@
 'use client';
 
 import { useRequireWallet } from '@/hooks/useRequireWallet';
+import { CreateOfferForm } from '@/components/CreateOfferForm';
 
 /**
  * Protected trade page - requires wallet connection.
- * Demonstrates AC-1.2.5: Redirection from protected pages.
+ * Allows users to create trade offers for their Pokémon cards.
  */
 export default function TradePage() {
   const { isConnected } = useRequireWallet();
@@ -26,20 +27,21 @@ export default function TradePage() {
     <div className="flex min-h-screen flex-col p-24">
       <div className="max-w-5xl mx-auto w-full">
         <h1 className="text-4xl font-bold mb-8 text-gray-900">Trade Cards</h1>
-        <section aria-labelledby="trade-description" className="bg-white rounded-lg shadow-md border-2 border-gray-200 p-6">
-          <h2 id="trade-description" className="sr-only">Trade page information</h2>
-          <p className="text-gray-700 text-base">
-            This is a protected page. You can only access it when your wallet is connected.
-          </p>
-          <p className="text-gray-700 mt-4 text-base">
-            If you disconnect your wallet, you will be automatically redirected to the home page.
-          </p>
-          <div className="mt-8 p-4 bg-blue-50 rounded-md border-2 border-blue-600" role="status">
-            <p className="text-sm text-blue-900 font-semibold">
-              <strong>Coming soon:</strong> Trade Pokemon cards with other users here.
-            </p>
-          </div>
+        
+        {/* Create Offer Section */}
+        <section aria-labelledby="create-offer-section" className="mb-12">
+          <h2 id="create-offer-section" className="text-2xl font-semibold mb-4 text-gray-800">
+            Create Trade Offer
+          </h2>
+          <CreateOfferForm />
         </section>
+
+        {/* Future sections: My Offers, All Open Offers */}
+        <div className="mt-12 p-4 bg-blue-50 rounded-md border-2 border-blue-600" role="status">
+          <p className="text-sm text-blue-900 font-semibold">
+            <strong>Coming soon:</strong> View and manage your offers, browse available trades.
+          </p>
+        </div>
       </div>
     </div>
   );
