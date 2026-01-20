@@ -40,3 +40,33 @@ export function formatTime(seconds: number): string {
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
+
+/**
+ * Formate une adresse Ethereum en version tronquée
+ * Ex: formatAddress("0x1234567890abcdef1234567890abcdef12345678") => "0x1234...5678"
+ */
+export function formatAddress(address: string): string {
+  if (!address || address.length < 10) return address;
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+/**
+ * Formate un timestamp Unix en temps relatif
+ * Ex: "2 hours ago", "5 minutes ago"
+ */
+export function formatTimestamp(unixTimestamp: number): string {
+  const now = Math.floor(Date.now() / 1000);
+  const diffSeconds = now - unixTimestamp;
+
+  if (diffSeconds < 60) return 'just now';
+  if (diffSeconds < 3600) {
+    const mins = Math.floor(diffSeconds / 60);
+    return `${mins} minute${mins > 1 ? 's' : ''} ago`;
+  }
+  if (diffSeconds < 86400) {
+    const hours = Math.floor(diffSeconds / 3600);
+    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  }
+  const days = Math.floor(diffSeconds / 86400);
+  return `${days} day${days > 1 ? 's' : ''} ago`;
+}
