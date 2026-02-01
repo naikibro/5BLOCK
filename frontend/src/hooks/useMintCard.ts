@@ -3,7 +3,7 @@
  * Gère les étapes: pin image → pin metadata → mint on-chain
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pokemon } from '@/types/pokemon';
@@ -50,9 +50,30 @@ export function useMintCard(): UseMintCardReturn {
   } = useWriteContract();
 
   // Attendre la confirmation de la transaction
-  useWaitForTransactionReceipt({
+  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: txHash,
   });
+
+  // Quand la transaction est confirmée, mettre à jour l'UI et invalider les caches
+  useEffect(() => {
+    if (isConfirmed && step === 'confirming') {
+      setStep('success');
+      
+      // Invalider les caches pour rafraîchir l'UI
+      queryClient.invalidateQueries({ queryKey: ['ownedCards'] });
+      queryClient.invalidateQueries({ queryKey: ['ownedCount'] });
+      queryClient.invalidateQueries({ queryKey: ['pokemon', 'list'] });
+      
+      // Invalider le statut "minté" pour tous les Pokemon
+      // Cela forcera tous les composants PokemonCard à se mettre à jour
+      queryClient.invalidateQueries({ 
+        queryKey: ['readContract', { 
+          address: pokemonCardsAddress,
+          functionName: 'isPokemonMinted'
+        }] 
+      });
+    }
+  }, [isConfirmed, step, queryClient]);
 
   /**
    * Fonction principale de mint
@@ -98,14 +119,7 @@ export function useMintCard(): UseMintCardReturn {
       setStep('confirming');
 
       // La confirmation est gérée par useWaitForTransactionReceipt
-      // On met à jour le step quand isConfirmed change
-
-      setStep('success');
-
-      // Invalider les caches pour rafraîchir l'UI
-      queryClient.invalidateQueries({ queryKey: ['ownedCards'] });
-      queryClient.invalidateQueries({ queryKey: ['ownedCount'] });
-      queryClient.invalidateQueries({ queryKey: ['pokemon', 'list'] });
+      // et le useEffect mettra à jour le step et invalidera les caches
     } catch (err) {
       setStep('error');
       const errorMessage =

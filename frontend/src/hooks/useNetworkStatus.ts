@@ -1,7 +1,7 @@
 import { useChainId } from 'wagmi';
-import { sepolia, hardhat } from 'wagmi/chains';
+import { sepolia } from 'wagmi/chains';
 
-const SUPPORTED_CHAINS = [sepolia, hardhat];
+const SUPPORTED_CHAINS = [sepolia];
 const SUPPORTED_CHAIN_IDS: number[] = SUPPORTED_CHAINS.map(c => c.id);
 
 /**

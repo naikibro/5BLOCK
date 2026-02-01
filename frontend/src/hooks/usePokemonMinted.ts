@@ -20,10 +20,10 @@ export function usePokemonMinted(pokemonId: number) {
     args: [BigInt(pokemonId)],
     query: {
       enabled: pokemonId >= 1 && pokemonId <= 151,
-      // Cache longue durée - un Pokémon minté ne peut plus être minté
-      staleTime: 60000, // 1 minute
+      // Cache court pour détecter les changements rapidement
+      staleTime: 5000, // 5 secondes
       refetchOnMount: true,
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true, // Rafraîchir quand l'onglet redevient actif
     },
   });
 

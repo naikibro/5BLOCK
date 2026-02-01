@@ -2,7 +2,7 @@
 
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useSwitchChain } from 'wagmi';
-import { sepolia, hardhat } from 'wagmi/chains';
+import { sepolia } from 'wagmi/chains';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
@@ -13,7 +13,8 @@ interface NetworkGuardProps {
 
 /**
  * Guard component that blocks content when user is on an unsupported network.
- * Shows a full-page alert with option to switch networks.
+ * Shows a full-page alert with option to switch to Sepolia.
+ * Simplified version for Sepolia-only deployment.
  * 
  * Implements US-1.3 acceptance criteria:
  * - AC-1.3.2: Show warning on wrong network
@@ -39,10 +40,10 @@ export function NetworkGuard({ children }: NetworkGuardProps) {
     }
   }, [error]);
 
-  const handleSwitchNetwork = (chainId: number) => {
+  const handleSwitchToSepolia = () => {
     setSwitchError(null);
     switchChain(
-      { chainId },
+      { chainId: sepolia.id },
       {
         onError: () => {
           // Error handled by useEffect above
@@ -62,23 +63,14 @@ export function NetworkGuard({ children }: NetworkGuardProps) {
               <AlertDescription className="mt-2">
                 <p className="mb-4">
                   You are currently connected to <strong>{chainName}</strong>.
-                  This application requires <strong>Sepolia Testnet</strong> or <strong>Localhost</strong>.
+                  This application requires <strong>Sepolia Testnet</strong>.
                 </p>
-                <div className="flex gap-2 flex-wrap">
-                  <Button
-                    onClick={() => handleSwitchNetwork(sepolia.id)}
-                    disabled={isPending}
-                  >
-                    {isPending ? 'Switching...' : 'Switch to Sepolia'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleSwitchNetwork(hardhat.id)}
-                    disabled={isPending}
-                  >
-                    {isPending ? 'Switching...' : 'Switch to Localhost'}
-                  </Button>
-                </div>
+                <Button
+                  onClick={handleSwitchToSepolia}
+                  disabled={isPending}
+                >
+                  {isPending ? 'Switching...' : 'Switch to Sepolia'}
+                </Button>
                 {switchError && (
                   <p className="mt-4 text-sm text-red-700">
                     {switchError}
