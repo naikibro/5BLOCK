@@ -1,106 +1,81 @@
 ---
 id: intro
 slug: /
-title: Getting Started
+title: Introduction
 sidebar_position: 1
 ---
+
 ![logo](../static/img/logo.png)
 
-# 5BLOCK - Pokemon Trading Cards DApp
+# 5BLOCK
 
-Mint, collect and trade Pokemon NFT cards on Ethereum.
-
----
-
-## Prerequisites
-
-> **Required:**
->
-> - Node.js 18+
-> - pnpm
-> - MetaMask extension
+**Decentralized Pokemon Card Trading on Ethereum**
 
 ---
 
-## Quick Start
+## The Problem with Centralized Trading
 
-### 1. Install Dependencies
+Traditional Pokemon card trading platforms operate on centralized servers controlled by corporations. This creates several issues:
 
-```bash
-git clone <repository>
-cd 5block
-pnpm install
-```
-
-### 2. Start Local Blockchain
-
-```bash
-pnpm run node
-```
-
-Keep this terminal open.
-
-### 3. Deploy Contract
-
-In a new terminal:
-
-```bash
-pnpm run deploy:local
-```
-
-Copy the displayed contract address.
-
-### 4. Configure Frontend
-
-```bash
-cd frontend
-```
-
-Create `.env.local`:
-
-```bash
-NEXT_PUBLIC_POKEMON_CARDS_ADDRESS=<paste_contract_address>
-PINATA_JWT=skip
-```
-
-Install and start:
-
-```bash
-pnpm install
-pnpm dev
-```
-
-### 5. Configure MetaMask
-
-Add Hardhat Local network:
-
-- **RPC**: http://127.0.0.1:8545
-- **Chain ID**: 31337
-
-Import test account (private key from step 2).
-
-### 6. Open App
-
-Navigate to http://localhost:3000/catalog and mint your first card!
+- **No True Ownership** - You don't own your cards; you have a license that can be revoked
+- **Platform Risk** - If the company shuts down, your collection disappears
+- **Artificial Scarcity** - Companies can mint unlimited copies, devaluing your assets
+- **Censorship** - Your account can be banned, freezing your cards
+- **Opaque Transactions** - No way to verify authenticity or provenance
 
 ---
 
-## Available Commands
+## The 5BLOCK Solution
 
-```bash
-pnpm run node           # Start Hardhat local node
-pnpm run deploy:local   # Deploy to local node
-pnpm test               # Run contract tests
-cd frontend && pnpm dev # Start frontend
-```
+5BLOCK is a decentralized application (DApp) that brings Pokemon card trading to the Ethereum blockchain, fundamentally changing how ownership works.
+
+### True Ownership
+
+When you mint a card on 5BLOCK, it's recorded on the Ethereum blockchain as an ERC-721 NFT. **You own it.** No company can take it away, freeze it, or revoke your access. Your private key is the only thing that controls your cards.
+
+### Provable Scarcity
+
+Each of the 151 Generation 1 Pokemon can only be minted **once**. Ever. This isn't artificial scarcity controlled by a company - it's mathematically enforced by smart contract code that anyone can verify.
+
+### Security Through Decentralization
+
+- **Immutable Contracts** - The rules can't change after deployment
+- **Transparent Transactions** - Every trade is publicly verifiable on-chain
+- **No Single Point of Failure** - The network runs on thousands of nodes worldwide
+
+### Provenance Tracking
+
+Every card tracks its complete ownership history on-chain. You can verify exactly who owned a card before you, creating a permanent record of authenticity.
 
 ---
 
-## App Routes
+## Key Features
 
-| Route | Description |
-| ----- | ----------- |
-| `/` | Home & wallet connection |
-| `/catalog` | Browse and mint cards |
-| `/inventory` | Your collection |
-| `/trade` | Marketplace |
+| Feature     | Description                                    |
+| ----------- | ---------------------------------------------- |
+| **Mint**    | Create unique NFT cards from 151 Gen 1 Pokemon |
+| **Collect** | Build a collection of up to 4 cards per wallet |
+| **Trade**   | Peer-to-peer trading through atomic swaps      |
+| **Track**   | View complete ownership history and provenance |
+
+---
+
+## Built for Collectors
+
+5BLOCK enforces scarcity at the protocol level:
+
+- **Max 4 cards per wallet** - Prevents hoarding
+- **10-minute lock after acquisition** - Prevents rapid flipping
+- **5-minute cooldown between trades** - Prevents spam
+
+These mechanics create a fair, balanced trading environment where value comes from genuine scarcity and collector demand.
+
+---
+
+## Get Started
+
+Ready to join the decentralized Pokemon card economy?
+
+1. [Set up your environment](/getting-started/running-the-project)
+2. [Understand the tech stack](/technical/tech-stack)
+3. [Explore the features](/features/catalog)

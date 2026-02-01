@@ -14,6 +14,12 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
+  // Enable Mermaid diagrams
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+
   // Set the production url of your site here
   url: 'https://localhost:3001',
   // Set the /<baseUrl>/ pathname under which your site is served
@@ -62,7 +68,7 @@ const config: Config = {
       title: '5BLOCK',
       logo: {
         alt: '5BLOCK Logo',
-        src: 'img/logo.svg',
+        src: 'img/favicon.webp',
       },
       items: [
         {
