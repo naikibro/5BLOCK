@@ -102,7 +102,7 @@ export function useOpenOffers(): UseOpenOffersReturn {
   // Extract offer data
   const rawOffers: Array<{ offer: OfferResult; offerId: bigint }> =
     openOfferIds?.map((offerId, index) => ({
-      offer: offerQueries.data?.[index]?.result as OfferResult,
+      offer: offerQueries.data?.[index]?.result as unknown as OfferResult,
       offerId,
     })) ?? [];
 
@@ -152,7 +152,7 @@ export function useOpenOffers(): UseOpenOffersReturn {
   const tokenURIs =
     cardDataQueries.data
       ?.filter((_, i) => i % 3 === 0)
-      .map((r) => r.result as string)
+      .map((r) => r.result as unknown as string)
       .filter((uri): uri is string => !!uri) ?? [];
 
   // Step 5: Fetch IPFS metadata
